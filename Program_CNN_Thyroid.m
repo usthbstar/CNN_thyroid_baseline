@@ -1,28 +1,16 @@
+%%%%%%%%%%%%%%%%%% CNN algorithm
+%%%%%%%%%%%%%%%%%% For Thyroid cancer
+
 clc
 clear all
 close all
 
 %Load benigns and maligns data 
-datapath='C:\Users\PC2321\Desktop\kheddarhamza_thyroid_cancer_article\kheddarhamza\program\GAN\program\2labled_data\data\originaldata_nada224_224_3'
+datapath='C:\Users\PC2321\Desktop\originaldata'
 imds = imageDatastore(datapath,'IncludeSubfolders',true,'LabelSource','foldernames');
-
-% %Resize data
-% for i=1:length(imds.Labels)
-% img=readimage(imds,i);
-%  [a b c]=size(img);
-%  switch(c)
-%      case (1)
-% img = imresize(readimage(imds,i),[256 256]);
-%      case (3)
-%   img = imresize(rgb2gray(readimage(imds,i)),[256 256]);         
-%  end
-%  imwrite(img,cell2mat(imds.Files(i)))
-% end
 
 %Split data
 [imdsTrain, imdsValidation]=splitEachLabel(imds,0.8, 'randomize'); 
-
-%Deep learning
 
 %Convolutional neural network architecture CNN
 layers=[
@@ -93,18 +81,11 @@ tic
 %Train netWorks
 [net netinfo]=trainNetwork(imdsTrain,layers,Options);
 
-%net = squeezenet;
-%net = googlenet;
-%net = vgg16;
 
-
-analyzeNetwork(net) %%AnalyzeNetwork
-lgraph = layerGraph(net); %Convert the Network into a Layer Graph
+analyzeNetwork(net)            %AnalyzeNetwork
+lgraph = layerGraph(net);      %Convert the Network into a Layer Graph
 plot(lgraph) %plot(lgraph)
 saveas(gcf, 'networkPlot.png') %Customize and Save the Plot
-
-%MATLAB supports exporting models to ONNX format
-%exportONNXNetwork(net, 'your_model.onnx');
 
 %Classification 
 [YPred, probs]=classify(net,imdsValidation);
@@ -112,13 +93,8 @@ saveas(gcf, 'networkPlot.png') %Customize and Save the Plot
 toc
 
 %Confusion matrix
-%cc = confusionchart (imdsValidation.Labels, YPred);
-[cmat,classNames] = confusionmat(imdsValidation.Labels, YPred) %gives matrix values
-cm = confusionchart(cmat,classNames); %for plot confusion matrix
-
-% Apply the custom colormap
-%cm.Colormap = customColormap;
-%cmat=cm.NormalizedValues;
+[cmat,classNames] = confusionmat(imdsValidation.Labels, YPred)             %gives matrix values
+cm = confusionchart(cmat,classNames);                                      %for plot confusion matrix
 
 %Parameters
 % acc, sn, sp metrics
@@ -156,11 +132,9 @@ xlabel("Iteration")
 ylabel("Accuracy")
 grid on
 
-
 trainingLoss = netinfo.TrainingLoss
 validationLoss = netinfo.ValidationLoss
 trainingAccuracy = netinfo.TrainingAccuracy
 validationAccuracy = netinfo.ValidationAccuracy
 
-fffffffff
 
